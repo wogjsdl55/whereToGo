@@ -1,4 +1,4 @@
-package mainService;
+package mainData.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,29 +8,29 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import org.json.JSONException;
 import org.json.JSONObject;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import DAO.CommonMasterDao;
-import jakarta.annotation.Resource;
+import mainData.dao.commonMasterDao;
 
 @Service
-public class DataMainService {
+public class dataMainService {
 	
-	@Resource(name="CommonMasterDao")
-	CommonMasterDao commonMasterDao;
+	@Autowired
+	//CommonMasterDao commonMasterDao;
 	  
 	public Map<String, Object> whereToGo() {
-		Map<String, Object> returnDataList = new HashMap<String, Object>();
-		
+		Map<String, Object> returnData = new HashMap<String, Object>();
+    	Map<String, Object> dataList = new HashMap<String, Object>();
+    	
 		//정부포탈 url
 		String urlName = "http://openapi.seoul.go.kr:8088";
 		//인증키
 		String key = "/5953414865776f673930544a775166";
 		//data포맷 xml : xml, xml파일 : xmlf, 엑셀파일 : xls, json파일 : json
-		String dataFormat = "/json";
+		String dataFormat = "/xml";
 		//서비스명
 		String serviceName = "/citydata";
 		//요청시작위치page
@@ -38,10 +38,10 @@ public class DataMainService {
 		//요청종료위치page
 		String endIndex = "/5";
 		//핫스팟장소]
-		String areaName = "/";
+		String cityName = "/광화문·덕수궁";
 		
-		String apiUrl = urlName + key + dataFormat + serviceName + startIndex + endIndex + areaName;
-		
+		String apiUrl = urlName + key + dataFormat + serviceName + startIndex + endIndex + cityName;
+		System.out.println("apiUrl="+ apiUrl);
 		
 		HttpURLConnection conn = null;
         JSONObject responseJson = null;
@@ -60,16 +60,18 @@ public class DataMainService {
 
 	        int responseCode = conn.getResponseCode();
 	        if (responseCode == 400 || responseCode == 401 || responseCode == 500 ) {
-	            System.out.println(responseCode + " Error!");
+	            System.out.println("responseCode="+ responseCode + " Error!");
+	            returnData.put("returnCode", responseCode);
 	        } else {
 	            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 	            StringBuilder sb = new StringBuilder();
 	            String line = "";
 	            while ((line = br.readLine()) != null) {
 	                sb.append(line);
+	                System.out.println("sb="+ sb);
 	            }
 	            responseJson = new JSONObject(sb.toString());
-	            System.out.println(responseJson);
+	            System.out.println("responseJson="+ responseJson);
 	        }
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -81,6 +83,6 @@ public class DataMainService {
 		
 
         
-		return returnDataList;
+		return returnData;
 	}
 }
