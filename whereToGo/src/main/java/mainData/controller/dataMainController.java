@@ -48,7 +48,7 @@ public class dataMainController  {
 	    	
 	    	System.out.println("param="+ param.get("test"));
 	    	//데이터 리턴입니다.
-	    	dataList = mainService.whereToGo();
+	    	dataList = mainService.whereToGo(param);
 	    	
 	    	returnData.put("returnCode", dataList.get("returnCode"));
 	    	returnData.put("returnMessage", dataList.get("returnMessage"));
